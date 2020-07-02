@@ -1,0 +1,31 @@
+
+
+
+
+
+#fontz {
+    font-family: 'caveat';
+    font-size:75px;
+    text-shadow: 4px 4px 2px rgba(150, 150, 150, 1);
+  }
+
+
+.borderz {
+    color:red;
+    background-color:lightGreen;
+    border:12px solid violet;
+    padding: 5px;
+    border-radius: 15px;
+    text-align: center;
+
+}
+  
+
+canvas {
+  background: #eee;
+  display: block;
+  margin: 0 auto;
+
+
+}
+
