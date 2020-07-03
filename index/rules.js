@@ -42,14 +42,13 @@ var showPegNumbers = false;
 
 
 /* ##########  To-Do / Future Plans  ##########
-/* region todo *\
+
 DONE > Start (:
 DONE > Fix Launcher Class
 > Fix / Fine Tune collision
->>> Collison/ bul direction when edge of wall hit goes in wrong direction
-> Peg image?
+DONE > Peg image?
 > Bullet Image?
-> Intro sprite when first loaded
+DONE > Intro sprite when first loaded
 DONE > Rotate Launcher
 DONE > Launcher Move Left/Right
 DONE > Reset Game
@@ -68,8 +67,8 @@ DONE > Game Over trigger
 DONE > Main Menu button during gameplay
 DONE > Save Levels?????
 DONE > Choose Level???? - Would need to complete a way to save progress
-> Reset level save
-> More Levels
+DONE > Reset level save
+DONE > More Levels
 > Make peg location groups - easier level creation
 > Bonus Pegs?
 > Random +1 Life Peg?
@@ -658,6 +657,13 @@ pegSets[11] = locationGroup['v'];
 pegSets[12] = locationGroup['w'];
 pegSets[13] = locationGroup['v'].concat(locationGroup['w']);
 pegSets[14] = locationGroup['v'].concat(locationGroup['w']);
+pegSets[15] = locationGroup['col6'].concat(locationGroup['col12']); //w moving walls
+pegSets[16] = locationGroup['col5'].concat(locationGroup['col13']); //w moving walls
+pegSets[17] = locationGroup['col4'].concat(locationGroup['col14']); //w moving walls
+pegSets[18] = locationGroup['v'];
+pegSets[19] = locationGroup['w'];
+pegSets[20] = locationGroup['all'];
+
 
 
 //pegs
@@ -731,7 +737,7 @@ function nextLevel() {
     localStorage.setItem('level',levelSet);
   }
 
-  if (levelSet == 5 || levelSet == 6 || levelSet == 7 || levelSet == 8 || levelSet == 14){
+  if (levelSet == 5 || levelSet == 6 || levelSet == 7 || levelSet == 8 || levelSet >= 14){
     walls[3].enabled = true;
     walls[3].moving = true;
   }
@@ -740,7 +746,7 @@ function nextLevel() {
     walls[3].enabled = false;
   }
 
-  if (levelSet == 9 || levelSet == 10 || levelSet == 14){
+  if (levelSet == 9 || levelSet == 10 || levelSet >= 14){
     walls[4].enabled = true;
     walls[4].moving = true;
   }
@@ -1080,7 +1086,6 @@ function keyDownHandler(e) {
   else if(e.key == "Escape") {
     gameRunning = false;
     mainMenuDisplay();
-    console.log("BOOM!!!");
   }
 
   else if(e.key == "l") {
