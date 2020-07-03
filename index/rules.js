@@ -338,6 +338,7 @@ var levelMenu = new menuCreate(levelT, 20, 0.35, 2);
 function setLevelBlackOut() {
   for (var i = 1; i <= 20; i++) {
     levelMenu.buttons[i].enabled = true;
+    levelSave.ls = localStorage.getItem('level');
     if (i > levelSave.ls) {
       levelMenu.buttons[i].enabled = false;
     }
@@ -832,7 +833,7 @@ function mouseClickHandler() {
         menu.buttons[6].enabled = false;
         break;
 
-      case 2:
+      case 2: // reset game
         menu.buttons[4].enabled = true;
         menu.buttons[5].enabled = true;
         menu.buttons[6].enabled = true;
@@ -868,8 +869,7 @@ function mouseClickHandler() {
         break;
 
       case 7:
-        localStorage.removeItem('level');
-        console.log(levelSave.ls);
+        localStorage.setItem('level', 1);
         levelSave.ls = 1;
         setLevelBlackOut();
         break;
