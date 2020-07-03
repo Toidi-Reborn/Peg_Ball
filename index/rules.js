@@ -21,7 +21,7 @@ var showMenuSetLives;
 var showMenuLifeReset;
 var showControls;
 var showLevels;
-
+//this change
 
 var levelSet = 0;
 var pegsLeft;
