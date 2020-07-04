@@ -21,9 +21,8 @@ var showMenuSetLives;
 var showMenuLifeReset;
 var showControls;
 var showLevels;
-//this change
 
-var levelSet = 0;
+var levelSet = 1;
 var pegsLeft;
 var multiPeg = 1;
 
@@ -34,9 +33,9 @@ var bulCount = 1;
 
 
 //show debug info
-var debugMode = true;
+var debugMode = false;
 var showPegNumbers = false;
-
+var levelOverride = false;
 
 // Fold ALL > ctl - K - 0
 
@@ -46,6 +45,7 @@ var showPegNumbers = false;
 DONE > Start (:
 DONE > Fix Launcher Class
 > Fix / Fine Tune collision
+> Fix collision with moving wall - hit too late
 DONE > Peg image
 > Bullet Image?
 DONE > Intro sprite when first loaded
@@ -53,7 +53,7 @@ DONE > Rotate Launcher
 DONE > Launcher Move Left/Right
 DONE > Reset Game
 DONE > Rules Menu
-> Game Mode?
+> Game Modes?
 DONE > Custom Lives
 > Unlimited Lives disabled in Custom Lives - Create way to unlock
 DONE >>> Life reset on Level change
@@ -69,6 +69,7 @@ DONE > Save Levels?????
 DONE > Choose Level???? - Would need to complete a way to save progress
 DONE > Reset level save
 DONE > More Levels
+DONE > Control message at start
 DONE > Make peg location groups - easier level creation
 > Bonus Pegs?
 > Random +1 Life Peg?
@@ -80,8 +81,9 @@ DONE > Fix odd peg location generation - Needs to generate with 1st row being 0-
 DONE > Correct Score, level, life reset on game over
 DONE > Message event during gameplay (multi, no more ammo, can not fire, cant move further, etc )
 > Center message on screen with variable sized string???
-> Need to load bul message
+DONE > Need to load bul message
 DONE > Score section text disapears with game over - Fix
+> Local Save high score like levels
 > 2nd Mode with On/Off pegs
 
 > Another Mode - Maybe - Enclose entire play area and have countdown til bul ends....  have bul fill with different color to show countdown??
@@ -171,10 +173,11 @@ class levelS{
   checklevels = function() {
       if (this.ls == null) {
           console.log("Nothing Saved");
-          //localStorage.setItem('group1','Show');
+      } else if(levelOverride) {
+          this.ls = 20;
+          localStorage.setItem('level', 20);
       } else {
           console.log("Saved Level: " + this.ls);
-          
       }	
   console.log(this.ls);
   }
@@ -334,6 +337,8 @@ for (var i = 1; i <= 20; i++) {
 }
 var levelMenu = new menuCreate(levelT, 20, 0.35, 2);
 
+
+// for level menu
 function setLevelBlackOut() {
   for (var i = 1; i <= 20; i++) {
     levelMenu.buttons[i].enabled = true;
@@ -372,7 +377,7 @@ class launcherClass {
 var launcher = new launcherClass();
 
 
-// bullet (used for drawing into scoreboard too)
+// bullet (used for player message and drawing into scoreboard too)
 class bullet {
   constructor() {
     this.name = "bullet";
@@ -494,6 +499,7 @@ class createWall {
     this.maxLeft = ml;
     this.maxRight = mr;
     this.x = x;
+    this.resetX = this.x;
     this.y = y;
     this.w = w;
     this.h = h;
@@ -514,6 +520,11 @@ class createWall {
     }
     this.x += this.speed;
   }
+
+  reset = function() {
+    this.x = this.resetX;
+  }
+
 
   wallHit = function() {
     var wX = (this.x);
@@ -641,27 +652,27 @@ locationGroup["hi"] = [19,20,36,37,53,54,70,71,87,88,104,105,121,122,138,139,155
 
 locationGroup["all"] = allPegs;
 
-
-pegSets[0] = locationGroup["all"];  // for testing and position numbers // future plan to use as a Bonus Round
+//  level change / redraw is with next level func
+pegSets[0] = locationGroup["all"];  // for testing and position numbers 
 pegSets[1] = locationGroup['col7'].concat(locationGroup['col11']);
 pegSets[2] = locationGroup['col6'].concat(locationGroup['col12']);
 pegSets[3] = locationGroup['col5'].concat(locationGroup['col13']);
 pegSets[4] = locationGroup['col4'].concat(locationGroup['col14']);
 pegSets[5] = locationGroup['col6'].concat(locationGroup['col12']); //w moving wall
 pegSets[6] = locationGroup['col5'].concat(locationGroup['col13']); //w moving wall
-pegSets[7] = locationGroup['col4'].concat(locationGroup['col14'], locationGroup['row3']); //w moving wall
+pegSets[7] = locationGroup['col4'].concat(locationGroup['col14'], locationGroup['row3']); //w wall
 pegSets[8] = locationGroup['col7'].concat(locationGroup['col8'], locationGroup['col9'], locationGroup['col10'], locationGroup['col11']);
 pegSets[9] = locationGroup['col4'].concat(locationGroup['col5'], locationGroup['col6'], locationGroup['col12'], locationGroup['col13'], locationGroup['col14']);
-pegSets[10] = locationGroup["hi"];
+pegSets[10] = locationGroup["hi"]; //w wall
 pegSets[11] = locationGroup['v'];
 pegSets[12] = locationGroup['w'];
 pegSets[13] = locationGroup['v'].concat(locationGroup['w']);
-pegSets[14] = locationGroup['v'].concat(locationGroup['w']);
-pegSets[15] = locationGroup['row6'].concat(locationGroup['row12']); //w moving walls
-pegSets[16] = locationGroup['row5'].concat(locationGroup['row13']); //w moving walls
-pegSets[17] = locationGroup['row4'].concat(locationGroup['row14']); //w moving walls
-pegSets[18] = locationGroup['v'];//w moving walls
-pegSets[19] = locationGroup['w'];//w moving walls
+pegSets[14] = locationGroup['v'].concat(locationGroup['w']); // with wall
+pegSets[15] = locationGroup['row6'].concat(locationGroup['row1']); //w moving walls
+pegSets[16] = locationGroup['row5'].concat(locationGroup['row3']); //w moving wall
+pegSets[17] = locationGroup['row4'].concat(locationGroup['row6']); //w moving walls
+pegSets[18] = locationGroup['v'];//w walls
+pegSets[19] = locationGroup['w'];//w walls
 pegSets[20] = locationGroup['all'];//w moving walls
 
 
@@ -737,6 +748,9 @@ function nextLevel() {
     localStorage.setItem('level',levelSet);
   }
 
+  walls[3].reset()
+  walls[4].reset()
+
   if (levelSet == 5 || levelSet == 6 || levelSet == 7 || levelSet == 8 || levelSet >= 14){
     walls[3].enabled = true;
     walls[3].moving = true;
@@ -744,6 +758,10 @@ function nextLevel() {
   else {
     walls[3].enabled = false;
     walls[3].enabled = false;
+  }
+
+  if (levelSet == 7 || levelSet == 10 || levelSet == 11 || levelSet == 14 || levelSet == 16){
+    walls[3].moving = false;
   }
 
   if (levelSet == 9 || levelSet == 10 || levelSet >= 14){
@@ -754,6 +772,11 @@ function nextLevel() {
     walls[4].enabled = false;
     walls[4].enabled = false;
   }
+
+
+
+
+
   setPegs();
   if (liveResetLevel) {
     bul.lives = bul.livesSave - 1;
@@ -794,11 +817,11 @@ function drawDebug() {
   ctx.fillText("Multi: " + multiPeg, 28, 240);
 }
 
-function drawControls(){
-  w = 300;
-  h = 200;
+function drawControls(size){
+  w = 300 * size;
+  h = 200 * size;
   x = (canvas.width / 2) - (this.w / 2);
-  y = 200;
+  y = 200
   ctx.drawImage(controlIMG, x, y, w, h);
 
 }
@@ -854,7 +877,7 @@ function mouseClickHandler() {
         
         break;
 
-      case 3:
+      case 3: //controlls
         showMenu = false;
         showControls = true;
 
@@ -1114,7 +1137,8 @@ function keyDownHandler(e) {
       console.log("FIRE!!!!");
       bul.fire();
     } else {
-      console.log("Can not Fire");
+      bul.playerMessage = "You need to load the Launcher!";
+      bul.messageShow = true;
     }
   }
 }
@@ -1156,7 +1180,7 @@ function draw() {
 
   if (showControls){
     controlMenu.drawMenu();
-    drawControls();
+    drawControls(1);
   }
 
   if (showMenuSetLives) {
@@ -1181,6 +1205,9 @@ function draw() {
     ctx.fillStyle = "black";
     ctx.fill();
     ctx.closePath();
+
+
+
 
     //draw walls
     for (var i = 0; i < walls.length; i++) {
@@ -1298,6 +1325,15 @@ function draw() {
       if (bul.loaded == true) {
         bul.drawBullet();
       }
+
+
+      if (bul.loaded == false && levelSet == 1){
+        drawControls(1.25);
+      }
+
+
+
+
       if (bul.fired == true) {
         if(bul.speed > 0) {
           bul.fire();
