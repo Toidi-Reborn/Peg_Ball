@@ -21,7 +21,7 @@ var showMenuSetLives;
 var showMenuLifeReset;
 var showControls;
 var showLevels;
-
+//this change
 
 var levelSet = 0;
 var pegsLeft;
@@ -42,14 +42,13 @@ var showPegNumbers = false;
 
 
 /* ##########  To-Do / Future Plans  ##########
-/* region todo *\
+
 DONE > Start (:
 DONE > Fix Launcher Class
 > Fix / Fine Tune collision
->>> Collison/ bul direction when edge of wall hit goes in wrong direction
-> Peg image?
+DONE > Peg image
 > Bullet Image?
-> Intro sprite when first loaded
+DONE > Intro sprite when first loaded
 DONE > Rotate Launcher
 DONE > Launcher Move Left/Right
 DONE > Reset Game
@@ -68,9 +67,9 @@ DONE > Game Over trigger
 DONE > Main Menu button during gameplay
 DONE > Save Levels?????
 DONE > Choose Level???? - Would need to complete a way to save progress
-> Reset level save
-> More Levels
-> Make peg location groups - easier level creation
+DONE > Reset level save
+DONE > More Levels
+DONE > Make peg location groups - easier level creation
 > Bonus Pegs?
 > Random +1 Life Peg?
 > Bonus Level
@@ -338,6 +337,7 @@ var levelMenu = new menuCreate(levelT, 20, 0.35, 2);
 function setLevelBlackOut() {
   for (var i = 1; i <= 20; i++) {
     levelMenu.buttons[i].enabled = true;
+    levelSave.ls = localStorage.getItem('level');
     if (i > levelSave.ls) {
       levelMenu.buttons[i].enabled = false;
     }
@@ -649,14 +649,21 @@ pegSets[3] = locationGroup['col5'].concat(locationGroup['col13']);
 pegSets[4] = locationGroup['col4'].concat(locationGroup['col14']);
 pegSets[5] = locationGroup['col6'].concat(locationGroup['col12']); //w moving wall
 pegSets[6] = locationGroup['col5'].concat(locationGroup['col13']); //w moving wall
-pegSets[7] = locationGroup['col4'].concat(locationGroup['col14']); //w moving wall
+pegSets[7] = locationGroup['col4'].concat(locationGroup['col14'], locationGroup['row3']); //w moving wall
 pegSets[8] = locationGroup['col7'].concat(locationGroup['col8'], locationGroup['col9'], locationGroup['col10'], locationGroup['col11']);
-pegSets[9] = locationGroup['col4'].concat(locationGroup['col5'],locationGroup['col6'],locationGroup['col12'],locationGroup['col13'],locationGroup['col14']);
+pegSets[9] = locationGroup['col4'].concat(locationGroup['col5'], locationGroup['col6'], locationGroup['col12'], locationGroup['col13'], locationGroup['col14']);
 pegSets[10] = locationGroup["hi"];
 pegSets[11] = locationGroup['v'];
 pegSets[12] = locationGroup['w'];
 pegSets[13] = locationGroup['v'].concat(locationGroup['w']);
 pegSets[14] = locationGroup['v'].concat(locationGroup['w']);
+pegSets[15] = locationGroup['row6'].concat(locationGroup['row12']); //w moving walls
+pegSets[16] = locationGroup['row5'].concat(locationGroup['row13']); //w moving walls
+pegSets[17] = locationGroup['row4'].concat(locationGroup['row14']); //w moving walls
+pegSets[18] = locationGroup['v'];//w moving walls
+pegSets[19] = locationGroup['w'];//w moving walls
+pegSets[20] = locationGroup['all'];//w moving walls
+
 
 
 //pegs
@@ -730,7 +737,7 @@ function nextLevel() {
     localStorage.setItem('level',levelSet);
   }
 
-  if (levelSet == 5 || levelSet == 6 || levelSet == 7 || levelSet == 8 || levelSet == 14){
+  if (levelSet == 5 || levelSet == 6 || levelSet == 7 || levelSet == 8 || levelSet >= 14){
     walls[3].enabled = true;
     walls[3].moving = true;
   }
@@ -739,7 +746,7 @@ function nextLevel() {
     walls[3].enabled = false;
   }
 
-  if (levelSet == 9 || levelSet == 10 || levelSet == 14){
+  if (levelSet == 9 || levelSet == 10 || levelSet >= 14){
     walls[4].enabled = true;
     walls[4].moving = true;
   }
@@ -758,7 +765,7 @@ function nextLevel() {
 //peg - bul collision detect
 function pegHit() {
   for (var i = 0; i < pegSets[levelSet].length; i++) {
-    var dx = bul.x - peg[i].x;
+    var dx = (bul.x - 10) - peg[i].x; // +10 is for the offset of the pegs once they changed to images
     var dy = bul.y - peg[i].y;
     var distance = Math.sqrt(dx * dx + dy * dy);
 
@@ -769,6 +776,7 @@ function pegHit() {
   };  
 }
 
+  //debug text
 function drawDebug() {
   ctx.font = "16px Arial";
   ctx.fillStyle = "black";
@@ -832,7 +840,7 @@ function mouseClickHandler() {
         menu.buttons[6].enabled = false;
         break;
 
-      case 2:
+      case 2: // reset game
         menu.buttons[4].enabled = true;
         menu.buttons[5].enabled = true;
         menu.buttons[6].enabled = true;
@@ -868,8 +876,7 @@ function mouseClickHandler() {
         break;
 
       case 7:
-        localStorage.removeItem('level');
-        console.log(levelSave.ls);
+        localStorage.setItem('level', 1);
         levelSave.ls = 1;
         setLevelBlackOut();
         break;
@@ -1080,7 +1087,6 @@ function keyDownHandler(e) {
   else if(e.key == "Escape") {
     gameRunning = false;
     mainMenuDisplay();
-    console.log("BOOM!!!");
   }
 
   else if(e.key == "l") {
@@ -1176,7 +1182,7 @@ function draw() {
     ctx.fill();
     ctx.closePath();
 
-
+    //draw walls
     for (var i = 0; i < walls.length; i++) {
       if (walls[i].enabled) {
         if (walls[i].moving) {
@@ -1201,8 +1207,6 @@ function draw() {
 
     //draw lives
     bul.drawScoreBoard();
-
-
 
 
     // Game Over
@@ -1344,8 +1348,6 @@ function draw() {
   }
 }
 
-
-//var interval = setInterval(draw,10);   //Removed and replaced with animateFrame
 
 draw()
 
