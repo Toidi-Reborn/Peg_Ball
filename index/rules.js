@@ -104,6 +104,11 @@ var bgSRC = 'index/images/bg.jpg';
 var bgImage = new Image();
 bgImage.src = bgSRC;
 
+//menuBackground
+var mbgSRC = 'index/images/bk3.jpg';
+var mbgImage = new Image();
+mbgImage.src = mbgSRC;
+
 //launcher
 var launcherPath = 'index/images/launch.png'
 var launcherIMG = new Image();
@@ -244,20 +249,10 @@ class menuCreate {
     this.names = names;
     this.numButtons = nbut;
     this.switch = true;
-
     this.lGap = (this.w - (this.bW * 2) - this.bGap) / 3;
-    
     this.rGap = (this.lGap * 2) + this.bW + this.bGap;
-    /*
-    this.lGap = (this.w - (this.bW * 2) - this.bGap) / 2;
-    this.rGap = this.lGap + this.bW + this.bGap;
-    */
-
-
     this.createButtons();
   }
-
-
 
   createButtons = function() {
     for (var i = 1; i <= this.numButtons; i++) {
@@ -293,9 +288,8 @@ class menuCreate {
 
   drawMenu = function() {
     ctx.beginPath();
-    ctx.rect(this.x, this.y, this.w, this.h); 
-    ctx.fillStyle = "white";
-    ctx.fill();
+    ctx.rect(this.x, this.y, this.w, this.h);
+    ctx.drawImage(mbgImage, this.x, this.y, this.w, this.h);
     ctx.closePath();
 
     for (var i = 1; i < this.buttons.length; i++) {
@@ -440,12 +434,13 @@ class bullet {
       ctx.closePath();
       }
     this.liveXAdjust = 90;
-    }
+  }
 
   drawPlayerMessage = function(){
     ctx.font = "30px Arial";
     ctx.fillStyle = "red";
-    ctx.fillText(this.playerMessage, 175, canvas.height - 300);
+    ctx.textAlign = "center";
+    ctx.fillText(this.playerMessage, canvas.width/2, canvas.height - 300);
   } 
 
   drawBullet = function() {
@@ -1195,7 +1190,6 @@ function draw() {
     levelMenu.drawMenu();
 
   }
-
 
   if (gameRunning) {
     ctx.drawImage(bgImage, 0, 0);
