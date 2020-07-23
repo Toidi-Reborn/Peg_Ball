@@ -434,12 +434,13 @@ class bullet {
       ctx.closePath();
       }
     this.liveXAdjust = 90;
-    }
+  }
 
   drawPlayerMessage = function(){
     ctx.font = "30px Arial";
     ctx.fillStyle = "red";
-    ctx.fillText(this.playerMessage, 175, canvas.height - 300);
+    ctx.textAlign = "center";
+    ctx.fillText(this.playerMessage, canvas.width/2, canvas.height - 300);
   } 
 
   drawBullet = function() {
@@ -1189,7 +1190,6 @@ function draw() {
     levelMenu.drawMenu();
 
   }
-
 
   if (gameRunning) {
     ctx.drawImage(bgImage, 0, 0);
