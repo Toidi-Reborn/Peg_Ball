@@ -441,6 +441,7 @@ class bullet {
     ctx.fillStyle = "red";
     ctx.textAlign = "center";
     ctx.fillText(this.playerMessage, canvas.width/2, canvas.height - 300);
+    ctx.textAlign = "left";
   } 
 
   drawBullet = function() {
